@@ -328,8 +328,8 @@ group by s.SourceID
 Having count(l.leadid) > 0
 END
 --execute SP_NumberOfLeads
-GO
 
+Go
 Create Procedure SP_ActiveContacts
 AS
 BEGIN
@@ -360,7 +360,7 @@ com.CompanyID = c.CompanyID
 order by 'Days since last update'
 END
 
-
+GO
 Create Procedure SP_SearchLogs
 
 (
@@ -369,11 +369,28 @@ Create Procedure SP_SearchLogs
 )
 AS
 BEGIN
-Select l.Activity [Activity],
+Select a.ActivityDate [Activity Date], a.ActivityType [Activity Type],
+l.JobTitle [Job Title], co.CompanyName [Company Name], a.Complete [Complete]
 From Activities a
 join Leads l
 on a.leadid = l.LeadID
 join Companies Co
 on l.CompanyId = co.CompanyID
 Where l.RecordDate between @startDate and @endDate
+END
+
+GO
+Create Procedure SP_LeadReport
+AS
+BEGIN
+
+Select l.LeadID,l.RecordDate [Record Date],l.JobTitle [Job Title], l.Descript [Description], l.EmploymentType [Employment Type], l.Location [Location], l.Activity [Activity],l.CompanyId [Company ID], l.AgencyID [Agency ID],l.ContactID [Contact ID], l.SourceID [Source ID], l.Selected [Selected], l.ModifiedDate [Date Modified], co.CompanyName [Company Name], s.SourceName [Source Name], C.ContactFirstName [Contact First], c.ContactLastName [Contact Last],c.Title [Title], c.Phone [Phone], c.Email [Email]
+From Leads l
+Join Companies co
+on l.CompanyId = co.CompanyID
+Join Contacts c
+on c.ContactID = l.ContactID
+Join Sources s
+on s.SourceID = l.SourceID
+
 END
